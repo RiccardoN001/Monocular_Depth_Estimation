@@ -1,4 +1,4 @@
-# Monocular Depth Estimation Challenge
+# Monocular Depth Estimation
 
 This repository implements a deep neural network in PyTorch to tackle the problem of monocular depth estimation for a university challenge. The objective is to train a model capable of predicting depth from a single image, providing insights for applications in computer vision fields like autonomous driving and augmented reality.
 
