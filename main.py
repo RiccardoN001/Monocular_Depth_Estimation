@@ -16,7 +16,7 @@ def main():
                         default=os.path.join("./DepthEstimationUnreal"))
 
     parser.add_argument("--is_train", type=bool, default=True)
-    parser.add_argument("--ckpt_file", type=str, default="depth_10.pth")
+    parser.add_argument("--ckpt_file", type=str, default="depth_50.pth")
 
     args = parser.parse_args()
     solver = Solver(args)

@@ -14,8 +14,17 @@ class Solver():
         self.args = args
 
         #Inizializzazione dei parametri di wandb per il logging dei risultati tramite la piattaforma online w&b
-        wandb.init(project="depth-estimation", config=args)
-        wandb.config.update(args)
+        #wandb.init(project="depth-estimation", config=args)
+        #wandb.config.update(args)
+
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+        self.net = Net().to(self.device)
+        self.loss_fn = torch.nn.MSELoss()
+
+        self.optim = torch.optim.Adam(self.net.parameters(), lr=args.lr)
+
+        self.args = args
 
         if self.args.is_train:
             self.train_data = DepthDataset(train=DepthDataset.TRAIN,
@@ -37,15 +46,6 @@ class Solver():
                                     data_dir=self.args.data_dir)
             ckpt_file = os.path.join("checkpoint", self.args.ckpt_file)
             self.net.load_state_dict(torch.load(ckpt_file, weights_only=True))
-        
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-        self.net = Net().to(self.device)
-        self.loss_fn = torch.nn.MSELoss()
-
-        self.optim = torch.optim.Adam(self.net.parameters(), lr=args.lr)
-
-        self.args = args
 
     def fit(self):
         args = self.args
@@ -69,8 +69,8 @@ class Solver():
 
                 train_loss += loss.item()
                 
-                wandb.log({"train_loss_batch": loss.item(), "Epoch": epoch +1}) #Logging su wandb di train_loss per ogni batch
-                wandb.log({"mean_train_loss": train_loss / len(self.train_loader), "Epoch": epoch +1}) #Logging su wandb di train_loss media per epoca
+                #wandb.log({"train_loss_batch": loss.item(), "Epoch": epoch +1}) #Logging su wandb di train_loss per ogni batch
+                #wandb.log({"mean_train_loss": train_loss / len(self.train_loader), "Epoch": epoch +1}) #Logging su wandb di train_loss media per epoca
 
                 print("Epoch [{}/{}] Loss: {:.3f} ".
                       format(epoch + 1, args.max_epochs, loss.item()))
@@ -111,13 +111,14 @@ class Solver():
                                   depth[0].cpu(),
                                   output[0].cpu().detach(),
                                   suffix=suffix)
-                    wandb.log({
-                        f"{suffix} Sample {i}": [
-                            wandb.Image(images[0].cpu(), caption="Input Image"),
-                            wandb.Image(depth[0].cpu(), caption="True Depth"),
-                            wandb.Image(output[0].cpu().detach(), caption="Predicted Depth")
-                        ]
-                    })
+                    # Log images to wandb
+                    # wandb.log({
+                    #     f"{suffix} Sample {i}": [
+                    #         wandb.Image(images[0].cpu(), caption="Input Image"),
+                    #         wandb.Image(depth[0].cpu(), caption="True Depth"),
+                    #         wandb.Image(output[0].cpu().detach(), caption="Predicted Depth")
+                    #     ]
+                    # })
         print("RMSE on", suffix, ":", rmse_acc / len(loader))
         print("SSIM on", suffix, ":", ssim_acc / len(loader))
 
