@@ -18,7 +18,7 @@ This repository implements a deep neural network in PyTorch to tackle the proble
 - **SSIM:** 0.56997  
 - Best checkpoint around **epoch 60**.
 
-See the accompanying report [`MDE_Paper`](./MDE_paper_Nicolini.pdf) for details.
+See the accompanying report [`MDE_Paper`](./doc/MDE_paper_Nicolini.pdf) for details.
 
 ## Repository Structure
 
